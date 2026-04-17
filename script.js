@@ -4,6 +4,8 @@ const sendMessageButton = document.querySelector("#send-message");
 const fileInput = document.querySelector("#file-input");
 const fileUploadWrapper = document.querySelector(".file-upload-wrapper");
 const fileCancelButton = document.querySelector("#file-cancel");
+const chatbotToggler = document.querySelector("#chatbot-toggle");
+const closeChatbot = document.querySelector("#close-chatbot");
 
 const userData = {
     message: null,
@@ -12,6 +14,8 @@ const userData = {
         mine_type: null
     }
 }
+
+const initialInputHeight = messageInput.scrollHeight;
 
 const createMessageElement = (content, ...classes) => {
     const div = document.createElement("div");
@@ -64,6 +68,8 @@ const handleOutgoingMessage = (e) => {
     e.preventDefault();
     userData.message = messageInput.value.trim();
     messageInput.value = "";
+    fileUploadWrapper.classList.remove("file-uploaded");
+    messageInput.dispatchEvent(new Event("input"));
 
     //create and display the usermessage
     const messageContent = `<div class="message-text"></div>
@@ -95,9 +101,15 @@ const handleOutgoingMessage = (e) => {
 // Handle enter key press for sending messages
 messageInput.addEventListener("keydown", (e) => {
     const userMessage = e.target.value.trim();
-    if(e.key === "Enter" && userMessage) {
+    if(e.key === "Enter" && userMessage && !e.shiftKey && window.innerWidth > 768) {
         handleOutgoingMessage(e);
     }
+});
+
+messageInput.addEventListener("input", () => {
+    messageInput.style.height = `${initialInputHeight}px`;
+    messageInput.style.height = `${messageInput.scrollHeight}px`;
+    document.querySelector(".chat-form").style.borderRadius = messageInput.scrollHeight > initialInputHeight ? "15px" : "32px";
 });
 
 fileInput.addEventListener("change", () => {
@@ -121,7 +133,30 @@ fileInput.addEventListener("change", () => {
 fileCancelButton.addEventListener("click", () => {
     userData.file = {};
     fileUploadWrapper.classList.remove("file-uploaded");
-})
+});
+
+//Initialize emojie picker
+const picker = new EmojiMart.Picker({
+    theme: "light",
+    skinTonePosition: "none",
+    previewPosition: "none",
+    onEmojiSelect: (emoji) => {
+        const { selectionStart: start, selectionEnd: end } = messageInput;
+        messageInput.setRangeText(emoji.native, start, end, "end");
+        messageInput.focus();
+    },
+    onClickOutside: (e) => {
+        if(e.target.id === "emoji-picker") {
+            document.body.classList.toggle("show-emoji-picker");
+        } else {
+            document.body.classList.remove("show-emoji-picker");
+        }
+    }
+});
+
+document.querySelector(".chatbot-form").appendChild(picker);
 
 sendMessageButton.addEventListener("click", (e) => handleOutgoingMessage(e))
 document.querySelector("#file-upload").addEventListener("click", () => fileInput.click());
+chatbotToggler.addEventListener("click", () => document.body.classList.toggle("show-chatbot"));
+closeChatbot.addEventListener("click", () => document.body.classList.remove("show-chatbot"));

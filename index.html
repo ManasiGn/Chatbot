@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <button id="chatbot-toggle">
+        <span class="material-symbols-rounded">mode_comment</span>
+        <span class="material-symbols-rounded">close</span>
+    </button>
     <div class="chatbot-popup">
         <!--Chatbot header-->
         <div class="chatbot-header">
@@ -37,7 +41,7 @@
             <form action="#" class="chatbot-form">
                 <textarea placeholder="Message.." class="message-input" required></textarea>
                 <div class="chatbot-controls">
-                    <button type="button" class="material-symbols-rounded">sentiment_satisfied</button>
+                    <button type="button" id="emoji-picker" class="material-symbols-rounded">sentiment_satisfied</button>
                     <div class="file-upload-wrapper">
                         <input type="file" accept="images/*" id="file-input" hidden>
                         <img src="#">
@@ -49,6 +53,11 @@
             </form>
         </div>
     </div>
+
+    <!-- Linking Emoji MArt script for emoji picker -->
+    <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
+
+    <!-- Linking customer script-->
     <script src="script.js"></script>
 </body>
 </html>
